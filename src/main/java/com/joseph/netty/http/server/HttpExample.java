@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 public class HttpExample {
     private static final Logger logger = LoggerFactory.getLogger(HttpExample.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         logger.info("Http server starting...");
         new Server(8888).start();
     }
