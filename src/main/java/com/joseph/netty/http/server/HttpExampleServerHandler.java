@@ -13,8 +13,19 @@ import io.netty.util.CharsetUtil;
  */
 public class HttpExampleServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
-        System.out.println(request.decoderResult().isSuccess());
-        System.out.println(request.uri());
+        //判断请求类型，只处理POST请求
+        if(request.method() != HttpMethod.POST){
+            sendError(ctx, HttpResponseStatus.METHOD_NOT_ALLOWED);
+            return;
+        }
+
+        //获取请求内容
+        ByteBuf buf = request.content();
+        byte[] bytes = new byte[buf.readableBytes()];
+        buf.readBytes(bytes);
+        String context = new String(bytes, "UTF-8");
+        System.out.println(context);
+
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
         response.headers().set("content-type", "text/html;charset=UTF-9");
         StringBuilder sb = new StringBuilder();
@@ -22,6 +33,11 @@ public class HttpExampleServerHandler extends SimpleChannelInboundHandler<FullHt
         ByteBuf buffer = Unpooled.copiedBuffer(sb, CharsetUtil.UTF_8);
         response.content().writeBytes(buffer);
         buffer.release();
+        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+    }
+
+    private void sendError(ChannelHandlerContext ctx, HttpResponseStatus status){
+        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_0, status);
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 }
