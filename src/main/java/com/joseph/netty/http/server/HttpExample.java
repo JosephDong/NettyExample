@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by dys09435 on 2017/4/24.
+ * Created by Joseph on 2017/4/24.
  */
 public class HttpExample {
     private static final Logger logger = LoggerFactory.getLogger(HttpExample.class);
